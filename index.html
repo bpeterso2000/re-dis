@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python Re DEBUG CheatSheet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@1.0.34/bulma-divider/dist/bulma-divider.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <h1 class="title">
+          Python re.DEBUG cheat sheet
+        </h1>
+        <div class="panel">
+          For descriptions of the regex patterns visit the <a href="https://www.debuggex.com/cheatsheet/regex/python">Python Regex Cheatsheet</a>
+        </div>
+
+ 
+        <!--
+        . Any character except newline
+        a The character a
+        ab The string ab
+        a|b a or b
+        a* 0 or more a's
+        \ Escapes a special character
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Basics
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column">Regex Patterns</div>
+                    <div class="column">Compiled</div>
+                    <div class="column">Disassembled</div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">.</code></pre></div>
+                    <div class="column"><pre><code class="python">ANY None</code></pre></div>
+                    <div class="column">
+<pre><code class="python">0. INFO 4 0b0 1 1 (to 5)
+5: ANY
+6. SUCCESS
+</code class="python"></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">a</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 97</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. SUCCESS
+</code class="python"></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">ab</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 97
+LITERAL 98
+</code class="python"></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 10 0b11 2 2 (to 11)
+  prefix_skip 2
+  prefix [0x61, 0x62] ('ab')
+  overlap [0, 0]
+11: LITERAL 0x61 ('a')
+13. LITERAL 0x62 ('b')
+15. SUCCESS
+</code class="python"></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">a|b</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b100 1 1 (to 9)
+  in
+5.     RANGE 0x61 0x62 ('a'-'b')
+8.     FAILURE
+9: IN 5 (to 15)
+11.   RANGE 0x61 0x62 ('a'-'b')
+14.   FAILURE
+15: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">ant|bug</code></pre></div>
+                    <div class="column">
+<pre><code class="python">BRANCH
+LITERAL 97
+LITERAL 110
+LITERAL 116
+OR
+LITERAL 98
+LITERAL 117
+LITERAL 103
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b100 3 3 (to 9)
+  in
+5.     RANGE 0x61 0x62 ('a'-'b')
+8.     FAILURE
+9: BRANCH 9 (to 19)
+11.   LITERAL 0x61 ('a')
+13.   LITERAL 0x6e ('n')
+15.   LITERAL 0x74 ('t')
+17.   JUMP 11 (to 29)
+19: branch 9 (to 28)
+20.   LITERAL 0x62 ('b')
+22.   LITERAL 0x75 ('u')
+24.   LITERAL 0x67 ('g')
+26.   JUMP 2 (to 29)
+28: FAILURE
+29: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">\.</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 46</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x2e] ('.')
+  overlap [0]
+9: LITERAL 0x2e ('.')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        * 0 or more
+        + 1 or more
+        ? 0 or 1
+        {2} Exactly 2
+        {2, 5} Between 2 and 5
+        {2,} 2 or more
+        (,5} Up to 5
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Quantifiers
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">a*</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 0 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 MAXREPEAT (to 5)
+5: REPEAT_ONE 6 1 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">a+</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 1 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 MAXREPEAT (to 5)
+5: REPEAT_ONE 6 0 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/>
+                  <div class="columns">
+                    <div class="column"><pre><code class="python">a?</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 0 1
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 1 (to 5)
+5: REPEAT_ONE 6 0 1 (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a{2}</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 2 2
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 2 2 (to 5)
+5: REPEAT_ONE 6 2 2 (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a{2,5}</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 2 5
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 2 5 (to 5)
+5: REPEAT_ONE 6 2 5 (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a{2,}</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 2 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 2 MAXREPEAT (to 5)
+5: REPEAT_ONE 6 2 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a{,5}</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 0 5
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 5 (to 5)
+5: REPEAT_ONE 6 0 5 (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        *? 0 or more
+        +? 1 or more
+        ?? 0 or 1
+        {2,}? Exactly 2
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Lazy Regular Expression Quantifiers
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a*?</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MIN_REPEAT 0 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 MAXREPEAT (to 5)
+5: MIN_REPEAT_ONE 6 0 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a+?</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MIN_REPEAT 1 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 MAXREPEAT (to 5)
+5: MIN_REPEAT_ONE 6 1 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a??</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MIN_REPEAT 0 1
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 1 (to 5)
+5: MIN_REPEAT_ONE 6 0 1 (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a{2,}?</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MIN_REPEAT 2 MAXREPEAT
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 2 MAXREPEAT (to 5)
+5: MIN_REPEAT_ONE 6 2 MAXREPEAT (to 12)
+9.   LITERAL 0x61 ('a')
+11.   SUCCESS
+12: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        (...) Capturing group
+        (...)(...) Two capturing groups
+        (?P<Y>...)  Capturing group named Y
+        (?:...) Non-capturing group
+        (...)(...)\1  Match the 1st captured group
+        (...)(...)\2  Match the 2nd captured group
+        (?P<Y>...)(...)(?P=Y)  Match the named group Y
+        a(?#...) Comment
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Groups
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(a)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 0
+  prefix [0x61] ('a')
+  overlap [0]
+9: MARK 0
+11. LITERAL 0x61 ('a')
+13. MARK 1
+15. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(a)(b)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+SUBPATTERN 2 0 0
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 10 0b1 2 2 (to 11)
+  prefix_skip 0
+  prefix [0x61, 0x62] ('ab')
+  overlap [0, 0]
+11: MARK 0
+13. LITERAL 0x61 ('a')
+15. MARK 1
+17. MARK 2
+19. LITERAL 0x62 ('b')
+21. MARK 3
+23. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(?P&lt;Y&gt;a)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 0
+  prefix [0x61] ('a')
+  overlap [0]
+9: MARK 0
+11. LITERAL 0x61 ('a')
+13. MARK 1
+15. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(?:a)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN None 0 0
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(a)(b)\1</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+SUBPATTERN 2 0 0
+LITERAL 98
+GROUPREF 1
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 12 0b1 3 3 (to 13)
+  prefix_skip 0
+  prefix [0x61, 0x62, 0x1] ('ab\x01')
+  overlap [0, 0, 0]
+13: MARK 0
+15. LITERAL 0x61 ('a')
+17. MARK 1
+19. MARK 2
+21. LITERAL 0x62 ('b')
+23. MARK 3
+25. LITERAL 0x1 ('\x01')
+27. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(a)(b)\2</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+SUBPATTERN 2 0 0
+LITERAL 98
+GROUPREF 2
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 12 0b1 3 3 (to 13)
+  prefix_skip 0
+  prefix [0x61, 0x62, 0x2] ('ab\x02')
+  overlap [0, 0, 0]
+13: MARK 0
+15. LITERAL 0x61 ('a')
+17. MARK 1
+19. MARK 2
+21. LITERAL 0x62 ('b')
+23. MARK 3
+25. LITERAL 0x2 ('\x02')
+27. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(?P&lt;Y&gt;a)(b)(?P=Y)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">SUBPATTERN 1 0 0
+LITERAL 97
+SUBPATTERN 2 0 0
+LITERAL 98
+GROUPREF 1
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 10 0b1 3 3 (to 11)
+  prefix_skip 0
+  prefix [0x61, 0x62] ('ab')
+  overlap [0, 0]
+11: MARK 0
+13. LITERAL 0x61 ('a')
+15. MARK 1
+17. MARK 2
+19. LITERAL 0x62 ('b')
+21. MARK 3
+23. GROUPREF 0
+25. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a(?#some comment)</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 97</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        [ab-d]  One character of: a, b, c, d
+        [^ab-d] One character except: a, b, c, d
+        [\b]  Backspace character
+        \d  One digit
+        \D  One non-digit
+        \s  One whitespace
+        \S  One non-whitespace
+        \w  One word character
+        \W  One non-word character
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Character Classes
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">[ab-d]</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+LITERAL 97
+RANGE (98, 100)
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b100 1 1 (to 9)
+  in
+5.     RANGE 0x61 0x64 ('a'-'d')
+8.     FAILURE
+9: IN 5 (to 15)
+11.   RANGE 0x61 0x64 ('a'-'d')
+14.   FAILURE
+15: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">[^ab-d]</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+NEGATE None
+LITERAL 97
+RANGE (98, 100)
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 9 0b100 1 1 (to 10)
+  in
+5.     NEGATE
+6.     RANGE 0x61 0x64 ('a'-'d')
+9.     FAILURE
+10: IN 6 (to 17)
+12.   NEGATE
+13.   RANGE 0x61 0x64 ('a'-'d')
+16.   FAILURE
+17: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">[\b]</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 8</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x8] ('\x08')
+  overlap [0]
+9: LITERAL 0x8 ('\x08')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\d</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_DIGIT
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_DIGIT
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_DIGIT
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\D</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_NOT_DIGIT
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_NOT_DIGIT
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_NOT_DIGIT
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\s</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_SPACE
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_SPACE
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_SPACE
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\S</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_NOT_SPACE
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_NOT_SPACE
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_NOT_SPACE
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\w</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_WORD
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_WORD
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_WORD
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\W</code></pre></div>
+                    <div class="column">
+<pre><code class="python">IN
+CATEGORY CATEGORY_NOT_WORD
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 7 0b100 1 1 (to 8)
+  in
+5.     CATEGORY UNI_NOT_WORD
+7.     FAILURE
+8: IN 4 (to 13)
+10.   CATEGORY UNI_NOT_WORD
+12.   FAILURE
+13: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        ^ Start of string
+        \A  Start of string, ignores m flag
+        $ End of string
+        \Z  End of string, ignores m flag
+        \b  Word boundary
+        \B  Non-word boundary
+        (?=...) Positive lookahead
+        (?!...) Negative lookahead
+        (?<=...)  Positive lookbehind
+        (?<!...)  Negative lookbehind
+        (?()|)  Conditional (need to add)
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Assertions
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">^a</code></pre></div>
+                    <div class="column">
+<pre><code class="python">AT AT_BEGINNING
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python">0. INFO 4 0b0 1 1 (to 5)
+5: AT BEGINNING
+7. LITERAL 0x61 ('a')
+9. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\Aa</code></pre></div>
+                    <div class="column">
+<pre><code class="python">AT AT_BEGINNING_STRING
+LITERAL 97
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python">0. INFO 4 0b0 1 1 (to 5)
+5: AT BEGINNING_STRING
+7. LITERAL 0x61 ('a')
+9. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a$</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 97
+AT AT_END
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. AT END
+13. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a\Z</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 97
+AT AT_END_STRING
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. AT END_STRING
+13. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\ba\b</code></pre></div>
+                    <div class="column">
+<pre><code class="python">AT AT_BOUNDARY
+LITERAL 97
+AT AT_BOUNDARY
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 1 (to 5)
+5: AT UNI_BOUNDARY
+7. LITERAL 0x61 ('a')
+9. AT UNI_BOUNDARY
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\Ba\B</code></pre></div>
+                    <div class="column">
+<pre><code class="python">AT AT_NON_BOUNDARY
+LITERAL 97
+AT AT_NON_BOUNDARY
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 1 (to 5)
+5: AT UNI_NON_BOUNDARY
+7. LITERAL 0x61 ('a')
+9. AT UNI_NON_BOUNDARY
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a(?=b)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 97
+ASSERT 1
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. ASSERT 5 0 (to 17)
+14.   LITERAL 0x62 ('b')
+16.   SUCCESS
+17: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">a(?!b)</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 97
+ASSERT NOT 1
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. ASSERT_NOT 5 0 (to 17)
+14.   LITERAL 0x62 ('b')
+16.   SUCCESS
+17: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(?&lt;=a)b</code></pre></div>
+                    <div class="column">
+<pre><code class="python">ASSERT -1
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 1 (to 5)
+5: ASSERT 5 1 (to 11)
+8.   LITERAL 0x61 ('a')
+10.   SUCCESS
+11: LITERAL 0x62 ('b')
+13. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(?&lt;!a)b</code></pre></div>
+                    <div class="column">
+<pre><code class="python">ASSERT NOT -1
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 1 (to 5)
+5: ASSERT_NOT 5 1 (to 11)
+8.   LITERAL 0x61 ('a')
+10.   SUCCESS
+11: LITERAL 0x62 ('b')
+13. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        \n  Newline
+        \r  Carriage return
+        \t  Tab
+        \YYY  Octal character YYY
+        \xYY  Hexadecimal character YY
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Regular Expression Special Characters
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\n</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 10</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0xa] ('\n')
+  overlap [0]
+9: LITERAL 0xa ('\n')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\r</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 13</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0xd] ('\r')
+  overlap [0]
+9: LITERAL 0xd ('\r')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\t</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 9</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x9] ('\t')
+  overlap [0]
+9: LITERAL 0x9 ('\t')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\141</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 97</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\x61</code></pre></div>
+                    <div class="column"><pre><code class="python">LITERAL 97</code></pre></div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b11 1 1 (to 9)
+  prefix_skip 1
+  prefix [0x61] ('a')
+  overlap [0]
+9: LITERAL 0x61 ('a')
+11. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        (ab)* a followed by b zero or more times
+        (ab)+? a followed by b one or more times (lazy)
+        \b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b an email address
+        <([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1> an HTML tag
+        ^[ \t]+|[ \t]+$ trim spaces & tabs
+        (x+x+)+y catastrophic backtracking
+        -->
+        <div class="panel">
+          <div class="card">
+            <header class="card-header">
+              <p class="card-header-title">
+                Compound Regular Expressions
+              </p>
+            </header>
+            <div class="card-content">
+              <div class="content">
+                
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(ab)*</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 0 MAXREPEAT
+SUBPATTERN 1 0 0
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 MAXREPEAT (to 5)
+5: REPEAT 11 0 MAXREPEAT (to 17)
+9.   MARK 0
+11.   LITERAL 0x61 ('a')
+13.   LITERAL 0x62 ('b')
+15.   MARK 1
+17: MAX_UNTIL
+18. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(ab)+?</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MIN_REPEAT 1 MAXREPEAT
+SUBPATTERN 1 0 0
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 2 MAXREPEAT (to 5)
+5: REPEAT 11 1 MAXREPEAT (to 17)
+9.   MARK 0
+11.   LITERAL 0x61 ('a')
+13.   LITERAL 0x62 ('b')
+15.   MARK 1
+17: MIN_UNTIL
+18. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b</code></pre></div>
+                    <div class="column">
+<pre><code class="python">AT AT_BOUNDARY
+MAX_REPEAT 1 MAXREPEAT
+IN
+RANGE (65, 90)
+RANGE (48, 57)
+LITERAL 46
+LITERAL 95
+LITERAL 37
+LITERAL 43
+LITERAL 45
+LITERAL 64
+MAX_REPEAT 1 MAXREPEAT
+IN
+RANGE (65, 90)
+RANGE (48, 57)
+LITERAL 46
+LITERAL 45
+LITERAL 46
+MAX_REPEAT 2 MAXREPEAT
+IN
+RANGE (65, 90)
+AT AT_BOUNDARY
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 6 MAXREPEAT (to 5)
+5: AT UNI_BOUNDARY
+7. REPEAT_ONE 16 1 MAXREPEAT (to 24)
+11.   IN 11 (to 23)
+13.     CHARSET [0x00000000, 0x03ff6820, 0x87fffffe, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000]
+22.     FAILURE
+23:   SUCCESS
+24: LITERAL 0x40 ('@')
+26. REPEAT_ONE 16 1 MAXREPEAT (to 43)
+30.   IN 11 (to 42)
+32.     CHARSET [0x00000000, 0x03ff6000, 0x07fffffe, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000]
+41.     FAILURE
+42:   SUCCESS
+43: LITERAL 0x2e ('.')
+45. REPEAT_ONE 10 2 MAXREPEAT (to 56)
+49.   IN 5 (to 55)
+51.     RANGE 0x41 0x5a ('A'-'Z')
+54.     FAILURE
+55:   SUCCESS
+56: AT UNI_BOUNDARY
+58. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">&lt;([A-Z][A-Z0-9]*)\b[^&gt;]*&gt;(.*?)&lt;/\1&gt;</code></pre></div>
+                    <div class="column">
+<pre><code class="python">LITERAL 60
+SUBPATTERN 1 0 0
+IN
+RANGE (65, 90)
+MAX_REPEAT 0 MAXREPEAT
+IN
+  RANGE (65, 90)
+  RANGE (48, 57)
+AT AT_BOUNDARY
+MAX_REPEAT 0 MAXREPEAT
+NOT_LITERAL 62
+LITERAL 62
+SUBPATTERN 2 0 0
+MIN_REPEAT 0 MAXREPEAT
+ANY None
+LITERAL 60
+LITERAL 47
+GROUPREF 1
+LITERAL 62
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 8 0b1 7 MAXREPEAT (to 9)
+  prefix_skip 1
+  prefix [0x3c] ('<')
+  overlap [0]
+9: LITERAL 0x3c ('<')
+11. MARK 0
+13. IN 5 (to 19)
+15.   RANGE 0x41 0x5a ('A'-'Z')
+18.   FAILURE
+19: REPEAT_ONE 13 0 MAXREPEAT (to 33)
+23.   IN 8 (to 32)
+25.     RANGE 0x41 0x5a ('A'-'Z')
+28.     RANGE 0x30 0x39 ('0'-'9')
+31.     FAILURE
+32:   SUCCESS
+33: MARK 1
+35. AT UNI_BOUNDARY
+37. REPEAT_ONE 6 0 MAXREPEAT (to 44)
+41.   NOT_LITERAL 0x3e ('>')
+43.   SUCCESS
+44: LITERAL 0x3e ('>')
+46. MARK 2
+48. MIN_REPEAT_ONE 5 0 MAXREPEAT (to 54)
+52.   ANY
+53.   SUCCESS
+54: MARK 3
+56. LITERAL 0x3c ('<')
+58. LITERAL 0x2f ('/')
+60. GROUPREF 0
+62. LITERAL 0x3e ('>')
+64. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">^[ \t]+|[ \t]+$</code></pre></div>
+                    <div class="column">
+<pre><code class="python">BRANCH
+AT AT_BEGINNING
+MAX_REPEAT 1 MAXREPEAT
+IN
+  LITERAL 32
+  LITERAL 9
+OR
+MAX_REPEAT 1 MAXREPEAT
+IN
+  LITERAL 32
+  LITERAL 9
+AT AT_END
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 1 MAXREPEAT (to 5)
+5: BRANCH 17 (to 23)
+7.   AT BEGINNING
+9.   REPEAT_ONE 11 1 MAXREPEAT (to 21)
+13.     IN 6 (to 20)
+15.       LITERAL 0x20 (' ')
+17.       LITERAL 0x9 ('\t')
+19.       FAILURE
+20:     SUCCESS
+21:   JUMP 19 (to 41)
+23: branch 17 (to 40)
+24.   REPEAT_ONE 11 1 MAXREPEAT (to 36)
+28.     IN 6 (to 35)
+30.       LITERAL 0x20 (' ')
+32.       LITERAL 0x9 ('\t')
+34.       FAILURE
+35:     SUCCESS
+36:   AT END
+38.   JUMP 2 (to 41)
+40: FAILURE
+41: SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(ab)*</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 0 MAXREPEAT
+SUBPATTERN 1 0 0
+LITERAL 97
+LITERAL 98
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 0 MAXREPEAT (to 5)
+5: REPEAT 11 0 MAXREPEAT (to 17)
+9.   MARK 0
+11.   LITERAL 0x61 ('a')
+13.   LITERAL 0x62 ('b')
+15.   MARK 1
+17: MAX_UNTIL
+18. SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                  <hr/><div class="columns">
+                    <div class="column"><pre><code class="python">(x+x+)+y</code></pre></div>
+                    <div class="column">
+<pre><code class="python">MAX_REPEAT 1 MAXREPEAT
+SUBPATTERN 1 0 0
+MAX_REPEAT 1 MAXREPEAT
+  LITERAL 120
+MAX_REPEAT 1 MAXREPEAT
+  LITERAL 120
+LITERAL 121
+</code></pre>
+                    </div>
+                    <div class="column">
+<pre><code class="python"> 0. INFO 4 0b0 3 MAXREPEAT (to 5)
+5: REPEAT 21 1 MAXREPEAT (to 27)
+9.   MARK 0
+11.   REPEAT_ONE 6 1 MAXREPEAT (to 18)
+15.     LITERAL 0x78 ('x')
+17.     SUCCESS
+18:   REPEAT_ONE 6 1 MAXREPEAT (to 25)
+22.     LITERAL 0x78 ('x')
+24.     SUCCESS
+</code></pre>
+                    </div>
+                  </div>
+
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </body>
+</html>
