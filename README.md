@@ -1,0 +1,1 @@
+A cheat sheet for reading re.DEBUG opcodes & tokens. The website is [here](https://bpeterso2000.github.io/re-dis/).
